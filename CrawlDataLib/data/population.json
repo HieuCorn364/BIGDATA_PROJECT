@@ -1,0 +1,317 @@
+[
+    {
+        "khu_vuc": "TP Hồ Chí Minh",
+        "dan_so": 8993082,
+        "dien_tich": 2061.0
+    },
+    {
+        "khu_vuc": "Hà Nội",
+        "dan_so": 8053663,
+        "dien_tich": 3358.9
+    },
+    {
+        "khu_vuc": "Thanh Hóa",
+        "dan_so": 3640128,
+        "dien_tich": 11114.7
+    },
+    {
+        "khu_vuc": "Nghệ An",
+        "dan_so": 3327791,
+        "dien_tich": 16493.7
+    },
+    {
+        "khu_vuc": "Đồng Nai",
+        "dan_so": 3097107,
+        "dien_tich": 5905.7
+    },
+    {
+        "khu_vuc": "Bình Dương",
+        "dan_so": 2426561,
+        "dien_tich": 2694.7
+    },
+    {
+        "khu_vuc": "Hải Phòng",
+        "dan_so": 2028514,
+        "dien_tich": 1522.5
+    },
+    {
+        "khu_vuc": "An Giang",
+        "dan_so": 1908352,
+        "dien_tich": 3536.7
+    },
+    {
+        "khu_vuc": "Hải Dương",
+        "dan_so": 1892254,
+        "dien_tich": 1668.2
+    },
+    {
+        "khu_vuc": "Dak Lak",
+        "dan_so": 1869322,
+        "dien_tich": 13030.5
+    },
+    {
+        "khu_vuc": "Thái Bình",
+        "dan_so": 1860447,
+        "dien_tich": 1570.5
+    },
+    {
+        "khu_vuc": "Bắc Giang",
+        "dan_so": 1803950,
+        "dien_tich": 3851.4
+    },
+    {
+        "khu_vuc": "Nam Định",
+        "dan_so": 1780393,
+        "dien_tich": 1668.0
+    },
+    {
+        "khu_vuc": "Tiền Giang",
+        "dan_so": 1764185,
+        "dien_tich": 2510.5
+    },
+    {
+        "khu_vuc": "Kiên Giang",
+        "dan_so": 1723067,
+        "dien_tich": 6348.8
+    },
+    {
+        "khu_vuc": "Long An",
+        "dan_so": 1688547,
+        "dien_tich": 4490.2
+    },
+    {
+        "khu_vuc": "Đồng Tháp",
+        "dan_so": 1599504,
+        "dien_tich": 3383.8
+    },
+    {
+        "khu_vuc": "Gia Lai",
+        "dan_so": 1513847,
+        "dien_tich": 15510.8
+    },
+    {
+        "khu_vuc": "Quảng Nam",
+        "dan_so": 1495812,
+        "dien_tich": 10574.7
+    },
+    {
+        "khu_vuc": "Bình Định",
+        "dan_so": 1486918,
+        "dien_tich": 6066.2
+    },
+    {
+        "khu_vuc": "Phú Thọ",
+        "dan_so": 1463726,
+        "dien_tich": 3534.6
+    },
+    {
+        "khu_vuc": "Bắc Ninh",
+        "dan_so": 1368840,
+        "dien_tich": 822.7
+    },
+    {
+        "khu_vuc": "Quảng Ninh",
+        "dan_so": 1320324,
+        "dien_tich": 6177.7
+    },
+    {
+        "khu_vuc": "Lâm Đồng",
+        "dan_so": 1296906,
+        "dien_tich": 9783.2
+    },
+    {
+        "khu_vuc": "Hà Tĩnh",
+        "dan_so": 1288866,
+        "dien_tich": 5990.7
+    },
+    {
+        "khu_vuc": "Bến Tre",
+        "dan_so": 1288463,
+        "dien_tich": 2394.6
+    },
+    {
+        "khu_vuc": "Thái Nguyên",
+        "dan_so": 1286751,
+        "dien_tich": 3536.4
+    },
+    {
+        "khu_vuc": "Hưng Yên",
+        "dan_so": 1252731,
+        "dien_tich": 930.2
+    },
+    {
+        "khu_vuc": "Sơn La",
+        "dan_so": 1248415,
+        "dien_tich": 14123.5
+    },
+    {
+        "khu_vuc": "TP Cần Thơ",
+        "dan_so": 1235171,
+        "dien_tich": 1439.2
+    },
+    {
+        "khu_vuc": "Quảng Ngãi",
+        "dan_so": 1231697,
+        "dien_tich": 5135.2
+    },
+    {
+        "khu_vuc": "Khánh Hòa",
+        "dan_so": 1231107,
+        "dien_tich": 5137.8
+    },
+    {
+        "khu_vuc": "Bình Thuận",
+        "dan_so": 1230808,
+        "dien_tich": 7812.8
+    },
+    {
+        "khu_vuc": "Sóc Trăng",
+        "dan_so": 1199653,
+        "dien_tich": 3311.8
+    },
+    {
+        "khu_vuc": "Cà Mau",
+        "dan_so": 1194476,
+        "dien_tich": 5294.8
+    },
+    {
+        "khu_vuc": "Tây Ninh",
+        "dan_so": 1169165,
+        "dien_tich": 4041.4
+    },
+    {
+        "khu_vuc": "Vĩnh Phúc",
+        "dan_so": 1151154,
+        "dien_tich": 1235.2
+    },
+    {
+        "khu_vuc": "Bà rịa Vũng Tàu",
+        "dan_so": 1148313,
+        "dien_tich": 1980.8
+    },
+    {
+        "khu_vuc": "Tp Đà Nẵng",
+        "dan_so": 1134310,
+        "dien_tich": 1284.9
+    },
+    {
+        "khu_vuc": "Thừa Thiên Huế",
+        "dan_so": 1128620,
+        "dien_tich": 5048.2
+    },
+    {
+        "khu_vuc": "Vĩnh Long",
+        "dan_so": 1022791,
+        "dien_tich": 1475.0
+    },
+    {
+        "khu_vuc": "Trà Vinh",
+        "dan_so": 1009168,
+        "dien_tich": 2358.2
+    },
+    {
+        "khu_vuc": "Bình Phước",
+        "dan_so": 994679,
+        "dien_tich": 6877.0
+    },
+    {
+        "khu_vuc": "Ninh Bình",
+        "dan_so": 982487,
+        "dien_tich": 1387.0
+    },
+    {
+        "khu_vuc": "Bạc Liêu",
+        "dan_so": 907236,
+        "dien_tich": 2669.0
+    },
+    {
+        "khu_vuc": "Quảng Bình",
+        "dan_so": 895430,
+        "dien_tich": 8065.3
+    },
+    {
+        "khu_vuc": "Phú Yên",
+        "dan_so": 872964,
+        "dien_tich": 5023.4
+    },
+    {
+        "khu_vuc": "Hà Giang",
+        "dan_so": 854679,
+        "dien_tich": 7929.5
+    },
+    {
+        "khu_vuc": "Hòa Bình",
+        "dan_so": 854131,
+        "dien_tich": 4591.0
+    },
+    {
+        "khu_vuc": "Hà Nam",
+        "dan_so": 852800,
+        "dien_tich": 860.9
+    },
+    {
+        "khu_vuc": "Yên Bái",
+        "dan_so": 821030,
+        "dien_tich": 6887.7
+    },
+    {
+        "khu_vuc": "Tuyên Quang",
+        "dan_so": 784811,
+        "dien_tich": 5867.9
+    },
+    {
+        "khu_vuc": "Lạng Sơn",
+        "dan_so": 781655,
+        "dien_tich": 8310.2
+    },
+    {
+        "khu_vuc": "Hậu Giang",
+        "dan_so": 733017,
+        "dien_tich": 1621.8
+    },
+    {
+        "khu_vuc": "Lào Cai",
+        "dan_so": 730420,
+        "dien_tich": 6364.0
+    },
+    {
+        "khu_vuc": "Quảng Tri",
+        "dan_so": 632375,
+        "dien_tich": 4739.8
+    },
+    {
+        "khu_vuc": "Dak Nông",
+        "dan_so": 622168,
+        "dien_tich": 6509.3
+    },
+    {
+        "khu_vuc": "Điện Biên",
+        "dan_so": 598856,
+        "dien_tich": 9541.0
+    },
+    {
+        "khu_vuc": "Ninh Thuận",
+        "dan_so": 590467,
+        "dien_tich": 3355.3
+    },
+    {
+        "khu_vuc": "Kon Tum",
+        "dan_so": 540341,
+        "dien_tich": 9674.2
+    },
+    {
+        "khu_vuc": "Cao Bằng",
+        "dan_so": 530341,
+        "dien_tich": 6700.3
+    },
+    {
+        "khu_vuc": "Lai Châu",
+        "dan_so": 460196,
+        "dien_tich": 9068.8
+    },
+    {
+        "khu_vuc": "Bắc Kan",
+        "dan_so": 313905,
+        "dien_tich": 4859.96
+    }
+]
