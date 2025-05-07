@@ -1,5 +1,7 @@
 import os
 import json
+import csv
+import sys
 
 @staticmethod
 def save_data_to_json(data, dir_path="./", file_name="data.json"):
@@ -166,6 +168,51 @@ def json_to_dict_list(file_path):
         print(f"Error reading JSON file: {e}")
         return None
 
+@staticmethod
+def json_to_csv(json_file_path, csv_file_path):
+    """
+    Converts a JSON file to a CSV file.
+
+    :param json_file_path: Full path to the input JSON file (must contain a list of dictionaries).
+    :param csv_file_path: Full path to the output CSV file.
+    :raises FileNotFoundError: If the JSON file does not exist.
+    :raises JSONDecodeError: If the JSON file is invalid.
+    :raises ValueError: If the JSON data is not a list of dictionaries.
+    :raises Exception: For other unexpected errors.
+    :return: None. Prints success message or error details.
+    """
+    try:
+        # Read JSON file
+        with open(json_file_path, 'r', encoding='utf-8-sig') as json_file:
+            data = json.load(json_file)
+        
+        # Check if data is a list of dictionaries
+        if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
+            raise ValueError("JSON data must be a list of dictionaries")
+        
+        # Get headers from the first dictionary
+        headers = list(data[0].keys())
+        
+        # Write to CSV file
+        with open(csv_file_path, 'w', encoding='utf-8', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=headers)
+            writer.writeheader()
+            writer.writerows(data)
+            
+        print(f"Successfully converted {json_file_path} to {csv_file_path}")
+        
+    except FileNotFoundError:
+        print(f"Error: File {json_file_path} not found")
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON format")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python json_to_csv.py input.json output.csv")
+    else:
+        json_to_csv(sys.argv[1], sys.argv[2])
 
 
 
