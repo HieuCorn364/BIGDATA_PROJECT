@@ -193,20 +193,43 @@ def hdfs_browser(request):
     sqoop_message = None
     error = None
     
+    def list_recursive(current_path, search_query):
+        """Liệt kê đệ quy file và thư mục khớp với từ khóa"""
+        result = []
+        try:
+            listing = client.listdir(current_path)
+            statuses = client.list_status(current_path)
+            status_dict = {s['pathSuffix']: s for s in statuses}
+            
+            for item in listing:
+                item_path = os.path.join(current_path, item).replace('\\', '/')
+                is_dir = status_dict.get(item, {}).get('type') == 'DIRECTORY'
+                
+                # Kiểm tra tên item có chứa từ khóa không
+                if search_query.lower() in item.lower():
+                    result.append({
+                        'name': item,
+                        'path': item_path,
+                        'is_dir': is_dir
+                    })
+                
+                # Nếu là thư mục, tìm đệ quy trong thư mục con
+                if is_dir:
+                    result.extend(list_recursive(item_path, search_query))
+                    
+        except Exception as e:
+            print(f"Error listing {current_path}: {str(e)}")
+        return result
+    
     try:
-        # Liệt kê tất cả file và thư mục trong /user
+        # Liệt kê nội dung thư mục hiện tại nếu không tìm kiếm
         listing = client.listdir(path)
         statuses = client.list_status(path)
         status_dict = {s['pathSuffix']: s for s in statuses}
         
-        # Tìm kiếm file nếu có search_query
         if search_query:
-            # Lọc file theo tên gần đúng (không phân biệt hoa thường)
-            filtered_items = [
-                item for item in listing
-                if search_query.lower() in item.lower() and
-                status_dict.get(item, {}).get('type') == 'FILE'
-            ]
+            # Tìm kiếm đệ quy trong /user
+            filtered_items = list_recursive('/user', search_query)
             
             if filtered_items:
                 # Tạo thư mục /user/tim_kiem
@@ -220,14 +243,13 @@ def hdfs_browser(request):
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 txt_filename = f"tim_kiem_{search_query}_{timestamp}.txt"
                 txt_path = f"{tim_kiem_dir}/{txt_filename}"
-                txt_content = "\n".join([os.path.join(path, item) for item in filtered_items])
+                txt_content = "\n".join([item['path'] for item in filtered_items])
                 with client.open(txt_path, 'w') as f:
                     f.write(txt_content.encode('utf-8'))
                 
                 # Thêm dữ liệu vào bảng HDFS bằng sqoop eval
                 for item in filtered_items:
-                    item_path = os.path.join(path, item).replace('\\', '/')
-                    escaped_path = item_path.replace("'", "''")
+                    escaped_path = item['path'].replace("'", "''")
                     sqoop_command = [
                         'sqoop', 'eval',
                         '--connect', 'jdbc:mysql://localhost:3306/BIGDATA',
@@ -237,36 +259,36 @@ def hdfs_browser(request):
                     ]
                     result_sqoop = subprocess.run(sqoop_command, capture_output=True, text=True)
                     if result_sqoop.returncode != 0:
-                        sqoop_message = f"Lỗi khi chạy Sqoop eval cho {item_path}: {result_sqoop.stderr}"
+                        sqoop_message = f"Lỗi khi chạy Sqoop eval cho {item['path']}: {result_sqoop.stderr}"
                         print("Sqoop error:", sqoop_message)
                         break
                 
                 if not sqoop_message:
-                    sqoop_message = f"Đã thêm {len(filtered_items)} file vào bảng HDFS và tạo file {txt_path}"
+                    sqoop_message = f"Đã thêm {len(filtered_items)} mục (file/thư mục) vào bảng HDFS và tạo file {txt_path}"
                     print("Sqoop success:", sqoop_message)
             else:
-                sqoop_message = f"Không tìm thấy file nào khớp với từ khóa '{search_query}'."
+                sqoop_message = f"Không tìm thấy file hoặc thư mục nào khớp với từ khóa '{search_query}'."
             
             # Cập nhật items để hiển thị kết quả tìm kiếm
-            for item in filtered_items:
-                item_path = os.path.join(path, item).replace('\\', '/')
-                status = status_dict.get(item, {})
-                is_dir = status.get('type') == 'DIRECTORY'
-                content = None
-                if not is_dir and request.GET.get('view') == item_path:
+            items = [
+                {
+                    'name': item['name'],
+                    'path': item['path'],
+                    'is_dir': item['is_dir'],
+                    'content': None
+                } for item in filtered_items
+            ]
+            
+            # Xem nội dung file nếu được yêu cầu
+            for item in items:
+                if not item['is_dir'] and request.GET.get('view') == item['path']:
                     try:
-                        with client.open(item_path) as f:
-                            content = f.read().decode('utf-8', errors='ignore')
+                        with client.open(item['path']) as f:
+                            item['content'] = f.read().decode('utf-8', errors='ignore')
                     except Exception as e:
-                        content = f"Lỗi khi đọc tệp: {str(e)}"
-                items.append({
-                    'name': item,
-                    'path': item_path,
-                    'is_dir': is_dir,
-                    'content': content
-                })
+                        item['content'] = f"Lỗi khi đọc tệp: {str(e)}"
         else:
-            # Hiển thị toàn bộ nội dung thư mục nếu không tìm kiếm
+            # Hiển thị toàn bộ nội dung thư mục hiện tại
             for item in listing:
                 item_path = os.path.join(path, item).replace('\\', '/')
                 status = status_dict.get(item, {})
