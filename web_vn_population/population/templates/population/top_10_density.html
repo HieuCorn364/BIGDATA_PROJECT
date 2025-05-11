@@ -1,0 +1,57 @@
+{% extends 'population/base.html' %}
+
+{% block title %}Top 10 Tỉnh Mật Độ Dân Số Cao Nhất{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Top 10 Tỉnh Có Mật Độ Dân Số Cao Nhất</h2>
+        
+        <!-- Nút điều hướng -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <a href="{% url 'population_list' %}" class="btn btn-primary btn-custom">Quay lại Danh sách Dân số</a>
+        </div>
+
+        <!-- Bảng dữ liệu -->
+        {% if populations %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th>Khu vực</th>
+                            <th>Dân số</th>
+                            <th>Diện tích (km²)</th>
+                            <th>Mật độ dân số</th>
+                            <th>Vùng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for population in populations %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ population.khu_vuc }}</td>
+                            <td>{{ population.dan_so }}</td>
+                            <td>{{ population.dien_tich }}</td>
+                            <td>{{ population.mat_do_dan_so }}</td>
+                            <td>{{ population.vung }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Không tìm thấy dữ liệu dân số.
+            </div>
+        {% endif %}
+
+        <!-- Thông báo Sqoop -->
+        {% if sqoop_message %}
+            <div class="alert alert-info" role="alert">
+                <strong>Trạng thái Sqoop:</strong> {{ sqoop_message }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

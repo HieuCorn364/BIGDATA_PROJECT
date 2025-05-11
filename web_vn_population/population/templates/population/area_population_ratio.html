@@ -1,0 +1,156 @@
+{% extends 'population/base.html' %}
+
+{% block content %}
+<h2 class="title">Tỷ trọng dân số theo khu vực</h2>
+
+{% if area_stats_result %}
+    <h3 class="subtitle">Kết quả</h3>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Khu vực</th>
+                    <th>Dân số</th>
+                    <th>Diện tích (km²)</th>
+                    <th>Mật độ</th>
+                    <th>Vùng</th>
+                    <th>Tỷ trọng</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for area in area_stats_result %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ area.khu_vuc }}</td>
+                    <td>{{ area.dan_so }}</td>
+                    <td>{{ area.dien_tich }}</td>
+                    <td>{{ area.mat_do_dan_so }}</td>
+                    <td>{{ area.vung }}</td>
+                    <td>{{ area.ty_trong|floatformat:4 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="error-message">Không có dữ liệu. Vui lòng kiểm tra kết nối cơ sở dữ liệu hoặc nhấn nút để thử lại.</p>
+{% endif %}
+
+{% if sqoop_message %}
+    <p class="status-message"><strong>Trạng thái Sqoop:</strong> {{ sqoop_message }}</p>
+{% endif %}
+
+<a href="{% url 'population_list' %}" class="back-link">Quay lại danh sách dân số</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Title */
+    .title {
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+    /* Subtitle */
+    .subtitle {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #34495e;
+    }
+
+    /* Form */
+    .form {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .button {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+    }
+
+    /* Table */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .table th {
+        background-color: #f4f4f4;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Error Message */
+    .error-message {
+        color: red;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Status Message */
+    .status-message {
+        font-size: 16px;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Back Link */
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        font-size: 16px;
+        color: #3498db;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .back-link:hover {
+        color: #2980b9;
+    }
+</style>
+{% endblock %}
