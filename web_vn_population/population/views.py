@@ -186,6 +186,46 @@ def area_population_ratio(request):
         'sqoop_message': sqoop_message
     })
     
+def top_10_density(request):
+    populations = None
+    sqoop_message = None
+    
+    try:
+        populations = Population.objects.order_by('-mat_do_dan_so')[:10]
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        target_dir = f"/user/sqoop/top_10_mat_do_{timestamp}"
+        sqoop_command = [
+            'sqoop', 'import',
+            '-Dorg.apache.sqoop.splitter.allow_text_splitter=true',
+            '--connect', 'jdbc:mysql://localhost:3306/BIGDATA',
+            '--username', 'root',
+            '--password', '@Bao1234',
+            '--query', f"SELECT * FROM POPULATION WHERE $CONDITIONS ORDER BY mat_do_dan_so DESC LIMIT 10 ",
+            '--target-dir', target_dir,
+            '--as-textfile',
+            '--fields-terminated-by', ',',
+            '-m', '1'
+        ]
+        client = HdfsClient(hosts='localhost:9870', user_name='hdfs')
+        try:
+            client.delete(target_dir, recursive=True)
+        except:
+            pass
+        result_sqoop = subprocess.run(sqoop_command, capture_output=True, text=True)
+        if result_sqoop.returncode == 0:
+            sqoop_message = f"Dữ liệu top 10 tỉnh mật độ cao nhất đã được đẩy lên HDFS tại {target_dir}"
+        else:
+            sqoop_message = f"Lỗi khi chạy Sqoop: {result_sqoop.stderr}"
+        print("Top 10 Sqoop message:", sqoop_message)
+    except Exception as e:
+        sqoop_message = f"Lỗi khi thực thi: {str(e)}"
+        print("Top 10 Error:", str(e))
+    
+    return render(request, 'population/top_10_density.html', {
+        'populations': populations,
+        'sqoop_message': sqoop_message
+    })
+    
 def hdfs_browser(request):
     path = request.GET.get('path', '/user')
     search_query = request.GET.get('search', '').strip()

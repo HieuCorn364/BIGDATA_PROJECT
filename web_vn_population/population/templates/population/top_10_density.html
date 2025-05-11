@@ -1,27 +1,15 @@
 {% extends 'population/base.html' %}
 
-{% block title %}Danh sách dân số{% endblock %}
+{% block title %}Top 10 Tỉnh Mật Độ Dân Số Cao Nhất{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4">Dữ liệu Dân số Việt Nam</h2>
+        <h2 class="mb-4">Top 10 Tỉnh Có Mật Độ Dân Số Cao Nhất</h2>
         
-        <!-- Biểu mẫu tìm kiếm -->
-        <form method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm khu vực (ví dụ: Hà)" value="{{ search_query }}">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-            </div>
-        </form>
-
-        <!-- Nút hành động -->
+        <!-- Nút điều hướng -->
         <div class="d-flex flex-wrap gap-2 mb-4">
-            <a href="{% url 'region_stats' %}?calculate=region_stats" class="btn btn-primary btn-custom">Tỷ trọng dân số theo vùng</a>
-            <br>
-            <a href="{% url 'area_population_ratio' %}?calculate=area_stats" class="btn btn-primary btn-custom">Tỷ trọng dân số theo khu vực</a>
-            <br>
-            <a href="{% url 'top_10_density' %}" class="btn btn-success btn-custom">Top 10 tỉnh mật độ cao nhất</a>
+            <a href="{% url 'population_list' %}" class="btn btn-primary btn-custom">Quay lại Danh sách Dân số</a>
         </div>
 
         <!-- Bảng dữ liệu -->
@@ -54,7 +42,7 @@
             </div>
         {% else %}
             <div class="alert alert-warning" role="alert">
-                Không tìm thấy khu vực nào khớp với từ khóa "{{ search_query }}". Vui lòng thử lại.
+                Không tìm thấy dữ liệu dân số.
             </div>
         {% endif %}
 

@@ -22,4 +22,5 @@ urlpatterns = [
     path('hdfs/', views.hdfs_browser, name='hdfs_browser'),
     path('region_stats/', views.region_stats, name='region_stats'),
     path('area_population_ratio/', views.area_population_ratio, name='area_population_ratio'),
+    path('top_10_density/', views.top_10_density, name='top_10_density'),
 ]
