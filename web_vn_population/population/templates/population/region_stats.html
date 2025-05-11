@@ -1,0 +1,35 @@
+{% extends 'population/base.html' %}
+
+{% block content %}
+<h2>Tỷ trọng dân số theo vùng</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="calculate_region_stats">Tính tỷ trọng theo vùng</button>
+</form>
+
+{% if region_stats_result %}
+    <h3>Kết quả</h3>
+    <table>
+        <tr>
+            <th>Vùng</th>
+            <th>Dân số</th>
+            <th>Diện tích</th>
+            <th>Tỷ trọng</th>
+        </tr>
+        {% for region in region_stats_result %}
+        <tr>
+            <td>{{ region.vung }}</td>
+            <td>{{ region.dan_so }}</td>
+            <td>{{ region.dien_tich }}</td>
+            <td>{{ region.ty_trong|floatformat:4 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% if sqoop_message %}
+    <p>{{ sqoop_message }}</p>
+{% endif %}
+
+<a href="{% url 'population_list' %}">Quay lại danh sách dân số</a>
+{% endblock %}
