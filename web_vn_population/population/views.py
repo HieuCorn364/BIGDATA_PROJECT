@@ -245,7 +245,7 @@ def hdfs_browser(request):
                 txt_filename = f"tim_kiem_{search_query}_{timestamp}.txt"
                 txt_path = f"{tim_kiem_dir}/{txt_filename}"
                 txt_content = "\n".join([item['path'] for item in filtered_items])
-                client.create(txt_path, txt_content.encode('utf-8')))
+                client.create(txt_path, txt_content.encode('utf-8'))
                 
                 # Thêm dữ liệu vào bảng HDFS bằng sqoop eval
                 for item in filtered_items:
