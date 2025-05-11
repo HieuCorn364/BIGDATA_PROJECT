@@ -1,107 +1,96 @@
 {% extends 'population/base.html' %}
 
 {% block content %}
-  <h2>Dữ liệu Dân số Việt Nam</h2>
-  
-  <div class="actions">
-    <a href="{% url 'region_stats' %}?calculate=region_stats">
-      <button class="btn btn-primary">Tính tỷ trọng theo vùng</button>
-    </a>
-    <a href="{% url 'area_population_ratio' %}?calculate=area_stats">
-      <button class="btn btn-primary">Tính tỷ trọng theo khu vực</button>
-    </a>
+  <div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Dữ liệu Dân số Việt Nam</h2>
+
+    <!-- Actions -->
+    <div class="flex justify-center space-x-4 mb-6">
+      <a href="{% url 'region_stats' %}?calculate=region_stats">
+        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+          Tính tỷ trọng theo vùng
+        </button>
+      </a>
+      <a href="{% url 'area_population_ratio' %}?calculate=area_stats">
+        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+          Tính tỷ trọng theo khu vực
+        </button>
+      </a>
+    </div>
+
+    <!-- Search -->
+    <div class="flex justify-center mb-6">
+      <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực..." onkeyup="searchTable()"
+        class="w-full max-w-md p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto shadow-lg rounded-lg">
+      <table id="populationTable" class="min-w-full bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Khu vực</th>
+            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Dân số</th>
+            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Diện tích</th>
+            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Mật độ dân số</th>
+            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Vùng</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for population in populations %}
+          <tr class="border-b hover:bg-gray-50 transition duration-200">
+            <td class="py-4 px-6 text-gray-800">{{ population.khu_vuc }}</td>
+            <td class="py-4 px-6 text-gray-800">{{ population.dan_so }}</td>
+            <td class="py-4 px-6 text-gray-800">{{ population.dien_tich }}</td>
+            <td class="py-4 px-6 text-gray-800">{{ population.mat_do_dan_so }}</td>
+            <td class="py-4 px-6 text-gray-800">{{ population.vung }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center space-x-4 mt-6">
+      <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition duration-300">
+        Trang trước
+      </button>
+      <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition duration-300">
+        Trang sau
+      </button>
+    </div>
   </div>
-
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực..." onkeyup="searchTable()" />
-  </div>
-
-  <table id="populationTable">
-    <thead>
-      <tr>
-        <th>Khu vực</th>
-        <th>Dân số</th>
-        <th>Diện tích</th>
-        <th>Mật độ dân số</th>
-        <th>Vùng</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for population in populations %}
-      <tr>
-        <td>{{ population.khu_vuc }}</td>
-        <td>{{ population.dan_so }}</td>
-        <td>{{ population.dien_tich }}</td>
-        <td>{{ population.mat_do_dan_so }}</td>
-        <td>{{ population.vung }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <div class="pagination">
-    <!-- Add pagination controls if necessary -->
-    <button class="btn btn-secondary">Trang trước</button>
-    <button class="btn btn-secondary">Trang sau</button>
-  </div>
-
 {% endblock %}
 
 {% block extra_css %}
+  <!-- Include Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    /* Custom animations for table rows */
+    tbody tr {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.5s ease forwards;
     }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    th {
-      background-color: #f2f2f2;
+
+    /* Zebra striping for better readability */
+    tbody tr:nth-child(even) {
+      background-color: #f9fafb;
     }
-    tr:hover {
-      background-color: #f5f5f5;
-    }
-    .actions {
-      margin-bottom: 20px;
-    }
-    .btn {
-      padding: 10px 20px;
-      margin: 5px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      color: white;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-    }
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
-    .search-container {
-      margin-bottom: 20px;
-    }
-    #searchInput {
-      padding: 10px;
-      width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    .pagination {
-      margin-top: 20px;
+
+    /* Responsive table adjustments */
+    @media (max-width: 640px) {
+      th, td {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+      }
     }
   </style>
 {% endblock %}
@@ -126,5 +115,13 @@
         }
       }
     }
+
+    // Add animation delay to table rows
+    document.addEventListener("DOMContentLoaded", () => {
+      const rows = document.querySelectorAll("#populationTable tbody tr");
+      rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
   </script>
 {% endblock %}
