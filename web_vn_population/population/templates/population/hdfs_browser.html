@@ -1,150 +1,75 @@
 {% extends 'population/base.html' %}
 
-{% block content %}
-<div class="container">
-    <h2 class="title">Trình duyệt HDFS: {{ current_path }}</h2>
+{% block title %}HDFS Browser{% endblock %}
 
-    {% if error %}
-        <p class="error-message">Lỗi: {{ error }}</p>
-    {% else %}
-        <div class="table-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Tên</th>
-                        <th>Loại</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.is_dir|yesno:"Thư mục,Tệp" }}</td>
-                        <td>
-                            {% if item.is_dir %}
-                                <a href="{% url 'hdfs_browser' %}?path={{ item.path }}" class="button">Duyệt</a>
-                            {% else %}
-                                <a href="{% url 'hdfs_browser' %}?path={{ current_path }}&view={{ item.path }}" class="button">Xem</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% if item.content %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">HDFS Browser</h2>
+        
+        <!-- Biểu mẫu tìm kiếm -->
+        <form method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm file (ví dụ: data)" value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </div>
+        </form>
+
+        <!-- Thông báo lỗi -->
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                Lỗi: {{ error }}
+            </div>
+        {% endif %}
+
+        <!-- Thông báo Sqoop -->
+        {% if sqoop_message %}
+            <div class="alert alert-info" role="alert">
+                <strong>Trạng thái:</strong> {{ sqoop_message }}
+            </div>
+        {% endif %}
+
+        <!-- Danh sách file/thư mục -->
+        <h5>Thư mục hiện tại: {{ current_path }}</h5>
+        {% if items %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
                         <tr>
-                            <td colspan="4">
-                                <h3 class="file-content-title">Nội dung Tệp: {{ item.path }}</h3>
-                                <pre class="file-content">{{ item.content }}</pre>
+                            <th>Tên</th>
+                            <th>Loại</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.is_dir|yesno:"Thư mục,File" }}</td>
+                            <td>
+                                {% if item.is_dir %}
+                                    <a href="{% url 'hdfs_browser' %}?path={{ item.path }}" class="btn btn-sm btn-primary">Duyệt</a>
+                                {% else %}
+                                    <a href="{% url 'hdfs_browser' %}?path={{ current_path }}&view={{ item.path }}" class="btn btn-sm btn-secondary">Xem</a>
+                                {% endif %}
                             </td>
                         </tr>
-                    {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
+                        {% if item.content %}
+                        <tr>
+                            <td colspan="3">
+                                <pre>{{ item.content }}</pre>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Không tìm thấy file hoặc thư mục nào{% if search_query %} khớp với từ khóa "{{ search_query }}"{% endif %}.
+            </div>
+        {% endif %}
+    </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    /* Container */
-    .container {
-        max-width: 1000px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fdfdfd;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Title */
-    .title {
-        font-size: 28px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
-        color: #2c3e50;
-    }
-
-    /* Error Message */
-    .error-message {
-        color: red;
-        font-size: 16px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    /* Table */
-    .table-container {
-        overflow-x: auto;
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .table th, .table td {
-        padding: 15px;
-        border: 1px solid #ddd;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    .table th {
-        background-color: #f4f4f4;
-        color: #333;
-        font-weight: bold;
-    }
-
-    .table tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    .table tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    /* Buttons */
-    .button {
-        padding: 8px 15px;
-        background-color: #3498db;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-        font-weight: bold;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .button:hover {
-        background-color: #2980b9;
-        transform: scale(1.05);
-    }
-
-    /* File Content */
-    .file-content-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-top: 20px;
-        color: #2c3e50;
-    }
-
-    .file-content {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-family: monospace;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-</style>
 {% endblock %}

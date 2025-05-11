@@ -187,35 +187,111 @@ def area_population_ratio(request):
     
 def hdfs_browser(request):
     path = request.GET.get('path', '/user')
+    search_query = request.GET.get('search', '').strip()
     client = HdfsClient(hosts='localhost:9870', user_name='hdfs')
+    items = []
+    sqoop_message = None
+    error = None
+    
     try:
-        # Lấy danh sách tệp/thư mục
+        # Liệt kê tất cả file và thư mục trong /user
         listing = client.listdir(path)
-        items = []
-        # Lấy trạng thái của các mục
         statuses = client.list_status(path)
-        status_dict = {s['pathSuffix']: s for s in statuses}  # Tạo từ điển để tra cứu
-
-        for item in listing:
-            item_path = os.path.join(path, item).replace('\\', '/')
-            # Kiểm tra xem mục là thư mục hay tệp
-            status = status_dict.get(item, {})
-            is_dir = status.get('type') == 'DIRECTORY' if status else False
-            content = None
-            if not is_dir and request.GET.get('view') == item_path:
+        status_dict = {s['pathSuffix']: s for s in statuses}
+        
+        # Tìm kiếm file nếu có search_query
+        if search_query:
+            # Lọc file theo tên gần đúng (không phân biệt hoa thường)
+            filtered_items = [
+                item for item in listing
+                if search_query.lower() in item.lower() and
+                status_dict.get(item, {}).get('type') == 'FILE'
+            ]
+            
+            if filtered_items:
+                # Tạo thư mục /user/tim_kiem
+                tim_kiem_dir = '/user/tim_kiem'
                 try:
-                    with client.open(item_path) as f:
-                        content = f.read().decode('utf-8', errors='ignore')
-                except Exception as e:
-                    content = f"Lỗi khi đọc tệp: {str(e)}"
-            items.append({
-                'name': item,
-                'path': item_path,
-                'is_dir': is_dir,
-                'content': content
-            })
+                    client.mkdirs(tim_kiem_dir)
+                except:
+                    pass
+                
+                # Tạo file txt
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                txt_filename = f"tim_kiem_{search_query}_{timestamp}.txt"
+                txt_path = f"{tim_kiem_dir}/{txt_filename}"
+                txt_content = "\n".join([os.path.join(path, item) for item in filtered_items])
+                with client.open(txt_path, 'w') as f:
+                    f.write(txt_content.encode('utf-8'))
+                
+                # Thêm dữ liệu vào bảng HDFS bằng sqoop eval
+                for item in filtered_items:
+                    item_path = os.path.join(path, item).replace('\\', '/')
+                    escaped_path = item_path.replace("'", "''")
+                    sqoop_command = [
+                        'sqoop', 'eval',
+                        '--connect', 'jdbc:mysql://localhost:3306/BIGDATA',
+                        '--username', 'root',
+                        '--password', '@Bao1234',
+                        '--query', f"INSERT INTO HDFS (file_path, time) VALUES ('{escaped_path}', NOW())"
+                    ]
+                    result_sqoop = subprocess.run(sqoop_command, capture_output=True, text=True)
+                    if result_sqoop.returncode != 0:
+                        sqoop_message = f"Lỗi khi chạy Sqoop eval cho {item_path}: {result_sqoop.stderr}"
+                        print("Sqoop error:", sqoop_message)
+                        break
+                
+                if not sqoop_message:
+                    sqoop_message = f"Đã thêm {len(filtered_items)} file vào bảng HDFS và tạo file {txt_path}"
+                    print("Sqoop success:", sqoop_message)
+            else:
+                sqoop_message = f"Không tìm thấy file nào khớp với từ khóa '{search_query}'."
+            
+            # Cập nhật items để hiển thị kết quả tìm kiếm
+            for item in filtered_items:
+                item_path = os.path.join(path, item).replace('\\', '/')
+                status = status_dict.get(item, {})
+                is_dir = status.get('type') == 'DIRECTORY'
+                content = None
+                if not is_dir and request.GET.get('view') == item_path:
+                    try:
+                        with client.open(item_path) as f:
+                            content = f.read().decode('utf-8', errors='ignore')
+                    except Exception as e:
+                        content = f"Lỗi khi đọc tệp: {str(e)}"
+                items.append({
+                    'name': item,
+                    'path': item_path,
+                    'is_dir': is_dir,
+                    'content': content
+                })
+        else:
+            # Hiển thị toàn bộ nội dung thư mục nếu không tìm kiếm
+            for item in listing:
+                item_path = os.path.join(path, item).replace('\\', '/')
+                status = status_dict.get(item, {})
+                is_dir = status.get('type') == 'DIRECTORY'
+                content = None
+                if not is_dir and request.GET.get('view') == item_path:
+                    try:
+                        with client.open(item_path) as f:
+                            content = f.read().decode('utf-8', errors='ignore')
+                    except Exception as e:
+                        content = f"Lỗi khi đọc tệp: {str(e)}"
+                items.append({
+                    'name': item,
+                    'path': item_path,
+                    'is_dir': is_dir,
+                    'content': content
+                })
     except Exception as e:
-        items = []
         error = str(e)
-        return render(request, 'population/hdfs_browser.html', {'error': error})
-    return render(request, 'population/hdfs_browser.html', {'items': items, 'current_path': path})
+        print("HDFS error:", error)
+    
+    return render(request, 'population/hdfs_browser.html', {
+        'items': items,
+        'current_path': path,
+        'search_query': search_query,
+        'sqoop_message': sqoop_message,
+        'error': error
+    })
