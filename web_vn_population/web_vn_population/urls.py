@@ -20,4 +20,5 @@ from population import views
 urlpatterns = [
     path('', views.population_list, name='population_list'),
     path('hdfs/', views.hdfs_browser, name='hdfs_browser'),
+    path('region_stats/', views.region_stats, name='region_stats'),
 ]

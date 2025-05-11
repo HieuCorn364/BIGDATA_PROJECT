@@ -1,13 +1,15 @@
 {% extends 'population/base.html' %}
 
 {% block content %}
-<h2>Population Data</h2>
+<h2>Dữ liệu Dân số Việt Nam</h2>
+<p><a href="{% url 'region_stats' %}"><button>Tính tỷ trọng theo vùng</button></a></p>
+
 <table>
     <tr>
         <th>Khu vực</th>
         <th>Dân số</th>
-        <th>Diện tích (km²)</th>
-        <th>Mật độ dân số (người/km²)</th>
+        <th>Diện tích</th>
+        <th>Mật độ dân số</th>
         <th>Vùng</th>
     </tr>
     {% for population in populations %}
