@@ -2,12 +2,9 @@ import requests
 import json
 import time
 import os
-
-# Thiết lập session
 session = requests.Session()
 
 def scrape_page_api(page_number, symbol="REE", page_size=200, max_retries=3):
-    # API của CafeF
     url = f"https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol={symbol}&StartDate=&EndDate=&PageIndex={page_number}&PageSize={page_size}"
 
     headers = {
@@ -23,8 +20,7 @@ def scrape_page_api(page_number, symbol="REE", page_size=200, max_retries=3):
             if "Data" in data and "Data" in data["Data"] and len(data["Data"]["Data"]) > 0:
                 rows = data["Data"]["Data"]
                 total_count = data["Data"]["TotalCount"]
-                total_pages = (total_count + page_size - 1) // page_size  # Tính tổng số trang
-
+                total_pages = (total_count + page_size - 1) // page_size  
                 page_data = []
                 for row in rows:
                     data_row = {
@@ -50,26 +46,22 @@ def scrape_page_api(page_number, symbol="REE", page_size=200, max_retries=3):
         except requests.RequestException as e:
             print(f"Lỗi khi cào dữ liệu trang {page_number} (lần thử {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
-                time.sleep(10 * (attempt + 1))  # Tăng thời gian chờ cho mỗi lần thử
+                time.sleep(10 * (attempt + 1))  
             continue
 
-    print(f"Đã thử {max_retries} lần cho trang {page_number} nhưng không thành công.")
+    print(f"Đã thử {max_retries} lần cho trang {page_number} nhưng lại thất bại rồi :(((")
     return None, 0
 
-# Đường dẫn lưu file JSON
 output_dir = "./data"
 output_file = os.path.join(output_dir, "ree.json")
 
-# Tạo thư mục nếu chưa tồn tại
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-# Khởi tạo danh sách dữ liệu
 all_data = []
 page = 1
 total_pages = float('inf')
 
-# Kiểm tra dữ liệu JSON hiện có
 try:
     with open(output_file, 'r', encoding='utf-8') as f:
         all_data = json.load(f)
@@ -78,9 +70,8 @@ try:
 except FileNotFoundError:
     print("Bắt đầu cào dữ liệu")
 
-# Vòng lặp crawl dữ liệu
 while page <= total_pages:
-    print(f"Đang cào dữ liệu trang {page}...")
+    print(f"Em Hiếu đang cào dữ liệu trang {page} nha quý vị!")
     page_data, total_pages = scrape_page_api(page)
 
     if not page_data:
@@ -88,23 +79,20 @@ while page <= total_pages:
 
     all_data.extend(page_data)
 
-    # Lưu dữ liệu vào file JSON
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(all_data, f, ensure_ascii=False, indent=4)
 
     page += 1
-    time.sleep(10)  # Tăng thời gian chờ lên 10 giây
+    time.sleep(10) 
 
-# Loại bỏ dữ liệu trùng lặp
 unique_data = []
 seen = set()
 for item in all_data:
-    item_tuple = tuple(item.items())  # Chuyển dict thành tuple để so sánh
+    item_tuple = tuple(item.items())  
     if item_tuple not in seen:
         seen.add(item_tuple)
         unique_data.append(item)
 
-# Lưu dữ liệu cuối cùng vào file JSON
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(unique_data, f, ensure_ascii=False, indent=4)
 
