@@ -7,8 +7,59 @@ from datetime import datetime
 from django.db import connection
 
 def population_list(request):
+    search_query = request.GET.get('search', '').strip()
     populations = Population.objects.all()
-    return render(request, 'population/population_list.html', {'populations': populations})
+    sqoop_message = None
+    
+    if search_query:
+        populations = Population.objects.filter(khu_vuc__icontains=search_query)
+        try:
+            # Tạo tên thư mục động
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            target_dir = f"/user/sqoop/tim_kiem_khu_vuc_{timestamp}"
+            
+            # Thoát ký tự đặc biệt trong từ khóa để tránh lỗi SQL injection
+            escaped_query = search_query.replace("'", "''")
+            
+            # Lệnh Sqoop
+            sqoop_command = [
+                'sqoop', 'import',
+                '-Dorg.apache.sqoop.splitter.allow_text_splitter=true',
+                '--connect', 'jdbc:mysql://localhost:3306/BIGDATA',
+                '--username', 'root',
+                '--password', '@Bao1234',
+                '--query', f"SELECT * FROM POPULATION WHERE khu_vuc LIKE '%{escaped_query}%' AND $CONDITIONS",
+                '--target-dir', target_dir,
+                '--as-textfile',
+                '--fields-terminated-by', ',',
+                '-m', '1'
+            ]
+            
+            # Xóa thư mục HDFS nếu đã tồn tại
+            client = HdfsClient(hosts='localhost:9870', user_name='hdfs')
+            try:
+                client.delete(target_dir, recursive=True)
+            except:
+                pass
+            
+            # Thực thi lệnh Sqoop
+            result_sqoop = subprocess.run(sqoop_command, capture_output=True, text=True)
+            if result_sqoop.returncode == 0:
+                sqoop_message = f"Dữ liệu tìm kiếm đã được đẩy lên HDFS tại {target_dir}"
+            else:
+                sqoop_message = f"Lỗi khi chạy Sqoop: {result_sqoop.stderr}"
+                
+            print("Search Sqoop message:", sqoop_message)
+                
+        except Exception as e:
+            sqoop_message = f"Lỗi khi thực thi Sqoop: {str(e)}"
+            print("Search Error:", str(e))
+    
+    return render(request, 'population/population_list.html', {
+        'populations': populations,
+        'search_query': search_query,
+        'sqoop_message': sqoop_message
+    })
 
 def region_stats(request):
     region_stats_result = None
