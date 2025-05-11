@@ -1,127 +1,129 @@
 {% extends 'population/base.html' %}
 
 {% block content %}
-  <div class="container mx-auto p-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Dữ liệu Dân số Việt Nam</h2>
+  <div class="container">
+    <h2 class="title">Dữ liệu Dân số Việt Nam</h2>
 
     <!-- Actions -->
-    <div class="flex justify-center space-x-4 mb-6">
-      <a href="{% url 'region_stats' %}?calculate=region_stats">
-        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
-          Tính tỷ trọng theo vùng
-        </button>
+    <div class="actions">
+      <a href="{% url 'region_stats' %}?calculate=region_stats" class="button">
+        Tỷ trọng dân số theo vùng
       </a>
-      <a href="{% url 'area_population_ratio' %}?calculate=area_stats">
-        <button class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
-          Tính tỷ trọng theo khu vực
-        </button>
+      <br>
+      <a href="{% url 'area_population_ratio' %}?calculate=area_stats" class="button">
+        Tỷ trọng dân số theo khu vực
       </a>
-    </div>
-
-    <!-- Search -->
-    <div class="flex justify-center mb-6">
-      <input type="text" id="searchInput" placeholder="Tìm kiếm khu vực..." onkeyup="searchTable()"
-        class="w-full max-w-md p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto shadow-lg rounded-lg">
-      <table id="populationTable" class="min-w-full bg-white">
-        <thead class="bg-gray-100">
+    <div class="table-container">
+      <table id="populationTable" class="table">
+        <thead>
           <tr>
-            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Khu vực</th>
-            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Dân số</th>
-            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Diện tích</th>
-            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Mật độ dân số</th>
-            <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Vùng</th>
+            <th>STT</th>
+            <th>Khu vực</th>
+            <th>Dân số</th>
+            <th>Diện tích</th>
+            <th>Mật độ dân số</th>
+            <th>Vùng</th>
           </tr>
         </thead>
         <tbody>
           {% for population in populations %}
-          <tr class="border-b hover:bg-gray-50 transition duration-200">
-            <td class="py-4 px-6 text-gray-800">{{ population.khu_vuc }}</td>
-            <td class="py-4 px-6 text-gray-800">{{ population.dan_so }}</td>
-            <td class="py-4 px-6 text-gray-800">{{ population.dien_tich }}</td>
-            <td class="py-4 px-6 text-gray-800">{{ population.mat_do_dan_so }}</td>
-            <td class="py-4 px-6 text-gray-800">{{ population.vung }}</td>
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ population.khu_vuc }}</td>
+            <td>{{ population.dan_so }}</td>
+            <td>{{ population.dien_tich }}</td>
+            <td>{{ population.mat_do_dan_so }}</td>
+            <td>{{ population.vung }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-center space-x-4 mt-6">
-      <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition duration-300">
-        Trang trước
-      </button>
-      <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition duration-300">
-        Trang sau
-      </button>
-    </div>
   </div>
 {% endblock %}
 
 {% block extra_css %}
-  <!-- Include Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    /* Custom animations for table rows */
-    tbody tr {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.5s ease forwards;
+    /* Container */
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fdfdfd;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Title */
+    .title {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
     }
 
-    /* Zebra striping for better readability */
-    tbody tr:nth-child(even) {
-      background-color: #f9fafb;
+    /* Actions */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
-    /* Responsive table adjustments */
-    @media (max-width: 640px) {
-      th, td {
-        font-size: 0.875rem;
-        padding: 0.75rem;
-      }
+    .button {
+      padding: 12px 25px;
+      background-color: #3498db;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #2980b9;
+      transform: scale(1.05);
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+      padding: 15px;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .table th {
+      background-color: #f4f4f4;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .table tr:hover {
+      background-color: #f1f1f1;
     }
   </style>
-{% endblock %}
-
-{% block extra_js %}
-  <script>
-    function searchTable() {
-      let input = document.getElementById("searchInput");
-      let filter = input.value.toLowerCase();
-      let table = document.getElementById("populationTable");
-      let tr = table.getElementsByTagName("tr");
-
-      for (let i = 1; i < tr.length; i++) {
-        let td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-          let textValue = td.textContent || td.innerText;
-          if (textValue.toLowerCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
-        }
-      }
-    }
-
-    // Add animation delay to table rows
-    document.addEventListener("DOMContentLoaded", () => {
-      const rows = document.querySelectorAll("#populationTable tbody tr");
-      rows.forEach((row, index) => {
-        row.style.animationDelay = `${index * 0.1}s`;
-      });
-    });
-  </script>
 {% endblock %}
