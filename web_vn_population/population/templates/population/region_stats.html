@@ -1,37 +1,53 @@
 {% extends 'population/base.html' %}
 
+{% block title %}Tỷ trọng dân số theo khu vực{% endblock %}
+
 {% block content %}
-<h2>Tỷ trọng dân số theo vùng</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" name="calculate_region_stats">Làm mới tỷ trọng theo vùng</button>
-</form>
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Tỷ trọng dân số theo khu vực</h2>
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <button type="submit" name="calculate_area_stats" class="btn btn-success btn-custom">Làm mới tỷ trọng theo khu vực</button>
+        </form>
 
-{% if region_stats_result %}
-    <h3>Kết quả</h3>
-    <table border="1">
-        <tr>
-            <th>Vùng</th>
-            <th>Dân số</th>
-            <th>Diện tích (km²)</th>
-            <th>Tỷ trọng</th>
-        </tr>
-        {% for region in region_stats_result %}
-        <tr>
-            <td>{{ region.vung }}</td>
-            <td>{{ region.dan_so }}</td>
-            <td>{{ region.dien_tich }}</td>
-            <td>{{ region.ty_trong|floatformat:4 }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>Không có dữ liệu. Vui lòng kiểm tra kết nối cơ sở dữ liệu hoặc nhấn nút để thử lại.</p>
-{% endif %}
+        {% if area_stats_result %}
+            <h3 class="mb-3">Kết quả</h3>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Khu vực</th>
+                            <th>Dân số</th>
+                            <th>Diện tích (km²)</th>
+                            <th>Tỷ trọng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for area in area_stats_result %}
+                        <tr>
+                            <td>{{ area.khu_vuc }}</td>
+                            <td>{{ area.dan_so }}</td>
+                            <td>{{ area.dien_tich }}</td>
+                            <td>{{ area.ty_trong|floatformat:4 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Không có dữ liệu. Vui lòng kiểm tra kết nối cơ sở dữ liệu hoặc nhấn nút để thử lại.
+            </div>
+        {% endif %}
 
-{% if sqoop_message %}
-    <p><strong>Trạng thái Sqoop:</strong> {{ sqoop_message }}</p>
-{% endif %}
+        {% if sqoop_message %}
+            <div class="alert alert-info" role="alert">
+                <strong>Trạng thái Sqoop:</strong> {{ sqoop_message }}
+            </div>
+        {% endif %}
 
-<a href="{% url 'population_list' %}">Quay lại danh sách dân số</a>
+        <a href="{% url 'population_list' %}" class="btn btn-secondary btn-custom">Quay lại danh sách dân số</a>
+    </div>
+</div>
 {% endblock %}

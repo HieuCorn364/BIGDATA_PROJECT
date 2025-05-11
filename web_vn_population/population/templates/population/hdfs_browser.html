@@ -1,33 +1,57 @@
 {% extends 'population/base.html' %}
 
+{% block title %}HDFS Browser{% endblock %}
+
 {% block content %}
-<h2>Trình duyệt HDFS: {{ current_path }}</h2>
-{% if error %}
-    <p style="color: red;">Lỗi: {{ error }}</p>
-{% else %}
-    <table>
-        <tr>
-            <th>Tên</th>
-            <th>Loại</th>
-            <th>Hành động</th>
-        </tr>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.is_dir|yesno:"Thư mục,Tệp" }}</td>
-            <td>
-                {% if item.is_dir %}
-                    <a href="{% url 'hdfs_browser' %}?path={{ item.path }}">Duyệt</a>
-                {% else %}
-                    <a href="{% url 'hdfs_browser' %}?path={{ current_path }}&view={{ item.path }}">Xem</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% if item.content %}
-            <h3>Nội dung Tệp: {{ item.path }}</h3>
-            <pre>{{ item.content }}</pre>
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">HDFS Browser</h2>
+        <h5 class="mb-3">Đường dẫn hiện tại: {{ current_path }}</h5>
+
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                Lỗi: {{ error }}
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Tên</th>
+                            <th>Loại</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.is_dir|yesno:"Thư mục,Tệp" }}</td>
+                            <td>
+                                {% if item.is_dir %}
+                                    <a href="{% url 'hdfs_browser' %}?path={{ item.path }}" class="btn btn-sm btn-primary">Mở</a>
+                                {% else %}
+                                    <a href="{% url 'hdfs_browser' %}?path={{ current_path }}&view={{ item.path }}" class="btn btn-sm btn-info">Xem</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if items|length == 0 %}
+                <div class="alert alert-warning" role="alert">
+                    Thư mục trống.
+                </div>
+            {% endif %}
         {% endif %}
-        {% endfor %}
-    </table>
-{% endif %}
+
+        {% if items and items.0.content %}
+            <h5 class="mt-4 mb-3">Nội dung tệp: {{ items.0.path }}</h5>
+            <pre class="bg-light p-3 border rounded">{{ items.0.content }}</pre>
+        {% endif %}
+
+        <a href="{% url 'population_list' %}" class="btn btn-secondary btn-custom">Quay lại danh sách dân số</a>
+    </div>
+</div>
 {% endblock %}
