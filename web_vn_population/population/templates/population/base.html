@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vietnam Population</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Vietnam Population Data</h1>
+    <a href="{% url 'population_list' %}">Population Data</a> |
+    <a href="{% url 'hdfs_browser' %}">HDFS Browser</a>
+    <hr>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
