@@ -5,6 +5,7 @@ import os
 import subprocess
 from datetime import datetime
 from django.db import connection
+from django.db.models import Q
 
 def population_list(request):
     search_query = request.GET.get('search', '').strip()
@@ -244,8 +245,7 @@ def hdfs_browser(request):
                 txt_filename = f"tim_kiem_{search_query}_{timestamp}.txt"
                 txt_path = f"{tim_kiem_dir}/{txt_filename}"
                 txt_content = "\n".join([item['path'] for item in filtered_items])
-                with client.open(txt_path, 'w') as f:
-                    f.write(txt_content.encode('utf-8'))
+                client.create(txt_path, txt_content.encode('utf-8')))
                 
                 # Thêm dữ liệu vào bảng HDFS bằng sqoop eval
                 for item in filtered_items:
