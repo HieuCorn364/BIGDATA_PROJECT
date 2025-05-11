@@ -2,10 +2,14 @@ from django.shortcuts import render
 from .models import Population
 from pyhdfs import HdfsClient
 import os
+import subprocess
+from datetime import datetime
+from django.db import connection
 
 def population_list(request):
     populations = Population.objects.all()
     return render(request, 'population/population_list.html', {'populations': populations})
+
 def region_stats(request):
     region_stats_result = None
     sqoop_message = None

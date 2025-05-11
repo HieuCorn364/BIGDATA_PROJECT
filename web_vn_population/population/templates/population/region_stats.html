@@ -4,16 +4,16 @@
 <h2>Tỷ trọng dân số theo vùng</h2>
 <form method="post">
     {% csrf_token %}
-    <button type="submit" name="calculate_region_stats">Tính tỷ trọng theo vùng</button>
+    <button type="submit" name="calculate_region_stats">Làm mới tỷ trọng theo vùng</button>
 </form>
 
 {% if region_stats_result %}
     <h3>Kết quả</h3>
-    <table>
+    <table border="1">
         <tr>
             <th>Vùng</th>
             <th>Dân số</th>
-            <th>Diện tích</th>
+            <th>Diện tích (km²)</th>
             <th>Tỷ trọng</th>
         </tr>
         {% for region in region_stats_result %}
@@ -25,10 +25,12 @@
         </tr>
         {% endfor %}
     </table>
+{% else %}
+    <p>Không có dữ liệu. Vui lòng kiểm tra kết nối cơ sở dữ liệu hoặc nhấn nút để thử lại.</p>
 {% endif %}
 
 {% if sqoop_message %}
-    <p>{{ sqoop_message }}</p>
+    <p><strong>Trạng thái Sqoop:</strong> {{ sqoop_message }}</p>
 {% endif %}
 
 <a href="{% url 'population_list' %}">Quay lại danh sách dân số</a>
