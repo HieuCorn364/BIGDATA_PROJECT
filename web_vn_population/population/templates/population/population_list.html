@@ -1,0 +1,23 @@
+{% extends 'population/base.html' %}
+
+{% block content %}
+<h2>Population Data</h2>
+<table>
+    <tr>
+        <th>Khu vực</th>
+        <th>Dân số</th>
+        <th>Diện tích (km²)</th>
+        <th>Mật độ dân số (người/km²)</th>
+        <th>Vùng</th>
+    </tr>
+    {% for population in populations %}
+    <tr>
+        <td>{{ population.khu_vuc }}</td>
+        <td>{{ population.dan_so }}</td>
+        <td>{{ population.dien_tich }}</td>
+        <td>{{ population.mat_do_dan_so }}</td>
+        <td>{{ population.vung }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

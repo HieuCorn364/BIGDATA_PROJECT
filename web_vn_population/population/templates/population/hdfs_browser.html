@@ -1,0 +1,33 @@
+{% extends 'population/base.html' %}
+
+{% block content %}
+<h2>Trình duyệt HDFS: {{ current_path }}</h2>
+{% if error %}
+    <p style="color: red;">Lỗi: {{ error }}</p>
+{% else %}
+    <table>
+        <tr>
+            <th>Tên</th>
+            <th>Loại</th>
+            <th>Hành động</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.is_dir|yesno:"Thư mục,Tệp" }}</td>
+            <td>
+                {% if item.is_dir %}
+                    <a href="{% url 'hdfs_browser' %}?path={{ item.path }}">Duyệt</a>
+                {% else %}
+                    <a href="{% url 'hdfs_browser' %}?path={{ current_path }}&view={{ item.path }}">Xem</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% if item.content %}
+            <h3>Nội dung Tệp: {{ item.path }}</h3>
+            <pre>{{ item.content }}</pre>
+        {% endif %}
+        {% endfor %}
+    </table>
+{% endif %}
+{% endblock %}
